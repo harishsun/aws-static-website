@@ -23,7 +23,7 @@ This project demonstrates how to host a static website using AWS S3, with option
 ## Author
 [Harish Sundaram](https://github.com/harishsun)
 
-## Important PreReq
+## Important Pre-requisite
 
 You do not need to use the root account for setting up and managing an S3 bucket or any other AWS service as part of your project. In fact, it is best practice to avoid using the root account for day-to-day tasks or any operations beyond initial account setup and billing management.
 
