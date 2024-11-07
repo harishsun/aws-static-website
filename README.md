@@ -9,10 +9,61 @@ This project demonstrates how to host a static website using AWS S3, with option
 - **Route 53** for DNS management (optional)
 
 ## Setup Steps
-1. Create and configure an S3 bucket for static website hosting.
-2. Upload website files.
-3. Configure permissions for public access.
-4. (Optional) Integrate with CloudFront and Route 53.
+1. Create and configure an S3 bucket for static website hosting
+   - Log in to the AWS Management Console and navigate to the S3 service.
+   - Create a new bucket by clicking the “Create bucket” button.
+      - Name the bucket: Ensure the bucket name matches the website domain (e.g., my-website.com), as this will simplify future configurations if you plan to use a custom domain.
+      - Choose a region: Select a region close to your target audience for lower latency.
+   - Configure bucket settings:
+      - Leave Block Public Access enabled initially. This will be configured later for public access.
+ 
+2. Upload website files
+   - Prepare your website files: Ensure you have the static files ready (e.g., index.html, styles.css, scripts.js). [**Note:** Use your own files or download samples from online. I downloaded them from https://www.free-css.com/free-css-templates]
+   - Upload files to the bucket:
+     - Open the bucket and click “Upload”.
+     - Drag and drop your website files or use the file browser to select them.
+     - Click “Upload” to complete the process.
+
+4. Configure Bucket for static website hosting
+   - Navigate to “Properties” for your bucket.
+   - Scroll down to the “Static website hosting” section and enable it.
+     - Select “Use this bucket to host a website”.
+     - Specify the “index document” (e.g., index.html). [**Note:** Make sure this document is not inside the folder, when u upload the first set of file make sure you upload them as files and not folders and then on for the subfolder use folder option]
+     - If needed, specify an “error document” (e.g., error.html).
+   - Save the configuration.
+ 
+5. Set Bucket Permissions for Public Access
+   - Navigate to the “Permissions” tab of the bucket.
+   - Edit the Bucket policy:
+     - Add a policy that allows public read access to the objects in the bucket. Use the following json policy template:
+     - Replace my-website.com with your bucket name.
+  ```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::my-website.com/*"
+    }
+  ]
+}
+```
+
+
+  - Save the policy and ensure Block Public Access settings are turned off as needed.
+      
+     
+6. Test Your Static Website
+   - Copy the “Bucket website endpoint” provided in the static website hosting configuration.
+   - Paste it into your browser to access your newly hosted site.
+   - Verify that the content loads correctly.
+
+7. Integrate Amazon CloudFront for Performance (Optional)
+   - Yet to complete
+8. Use Route 53 for a Custom Domain (Optional)
+   - Yet to complete
 
 ## Screenshots
 ![Website Screenshot](https://private-user-images.githubusercontent.com/47561553/383953747-442d3c01-977f-4e94-accc-a6741065f14b.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MzA5ODIzMzYsIm5iZiI6MTczMDk4MjAzNiwicGF0aCI6Ii80NzU2MTU1My8zODM5NTM3NDctNDQyZDNjMDEtOTc3Zi00ZTk0LWFjY2MtYTY3NDEwNjVmMTRiLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDExMDclMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQxMTA3VDEyMjAzNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTQyYzlmOTBiYjY2MzBmOWMzZWMwZGExZGM1OGYzYjliNGNiYTM0OThhZWFlMzFjYTEwOTljYTEwYjgyNzQwYzcmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.Ju9v3XZEKww2JAGkYsFgb6dj_R4B8KmqdK56_eMaItc)
