@@ -151,7 +151,7 @@ This project demonstrates how to host a static website using AWS S3, with option
 
 
 ## Live Demo
-[Visit the live site here](http://my-website211.com.s3-website-us-east-1.amazonaws.com/) 
+[Visit the live site here](https://d21elmou5l4ub.cloudfront.net/) 
 
 ## Author
 [Harish Sundaram](https://github.com/harishsun)
