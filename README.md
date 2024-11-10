@@ -28,9 +28,15 @@ This project demonstrates how to host a static website using AWS S3, with option
     - **Buckets:** Top-level containers where data is stored.
     - **Objects:** Individual files stored in buckets, identified by a unique key within the bucket.
     - **Folders:** Not actual entities, but used to organize objects by prefixing object keys with a directory-like structure.
+      
+- **Amazon CloudFront** for content distribution
+  - Faster Content Delivery: CloudFront caches content at edge locations around the globe, reducing latency for users.
+  - Scalability: Automatically scales to handle spikes in traffic.
+  - Security Features: Provides options such as custom SSL/TLS certificates, DDoS protection, and AWS WAF (Web Application Firewall) integration.
+  - Compression and Optimization: Serves compressed versions of files for optimized delivery.
 
 
-## Setup Steps
+## S3 Setup Steps
 1. Create and configure an S3 bucket for static website hosting
    - Log in to the AWS Management Console and navigate to the S3 service.
    - Create a new bucket by clicking the “Create bucket” button.
@@ -81,10 +87,58 @@ This project demonstrates how to host a static website using AWS S3, with option
    - Copy the “Bucket website endpoint” provided in the static website hosting configuration.
    - Paste it into your browser to access your newly hosted site.
    - Verify that the content loads correctly.
+   - Issue faced: Without .index.html accessing the cloudfront URL does seem to work
+   - Fix - In the CloudFront distribution settings under defualt root object enter "index.html" - This sixed the issue
 
-7. Integrate Amazon CloudFront for Performance (Optional)
-   - Yet to complete
-8. Use Route 53 for a Custom Domain (Optional)
+## Integrate Amazon CloudFront with an S3 Bucket
+1.  Log in to AWS Management Console
+   - Go to the CloudFront service.
+2. Create a CloudFront Distribution
+   - Click on “Create Distribution” and choose “Web” as the distribution type.
+   - In the Origin Settings:
+     - Origin Domain Name: Select your S3 bucket from the dropdown list. It should look like my-bucket-name.s3.amazonaws.com.
+     - Origin Path: Leave this blank unless you want CloudFront to only use a specific path in the bucket.
+     - Origin ID: This will be auto-populated, but you can customize it if needed.
+     - Restrict Bucket Access: Set this to “Yes” to enhance security by ensuring only CloudFront can access the bucket directly.
+     - Origin Access Control: Create or use an existing Origin Access Control (OAC) to allow CloudFront to access your bucket while preventing direct public access.
+3. Configure Default Cache Behavior
+   - Viewer Protocol Policy: Choose “Redirect HTTP to HTTPS” or “HTTPS Only” for secure access.
+   - Cache and Origin Request Settings:
+4. Set Distribution Settings
+   - Price Class: Choose a price class based on where you want CloudFront to serve content (e.g., “Use Only U.S., Canada, and Europe” for cost savings).
+   - Alternate Domain Names (CNAMEs): Enter your custom domain name if you have one (e.g., www.example.com).
+5. Review and Create the Distribution
+   - Click “Create Distribution”.
+   - It may take a few minutes for CloudFront to deploy the distribution. You will see the status change to “Deployed” once it is ready.
+6. Update the S3 Bucket Policy
+   - Ensure the S3 bucket policy allows access only through CloudFront. Here is a sample policy:
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "cloudfront.amazonaws.com"
+      },
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::my-bucket-name/*",
+      "Condition": {
+        "StringEquals": {
+          "AWS:SourceArn": "arn:aws:cloudfront::account-id:distribution/distribution-id"
+        }
+      }
+    }
+  ]
+}
+```
+   - Replace my-bucket-name, account-id, and distribution-id with your specific values.
+7. Test Your Setup
+   - Visit your CloudFront domain /index.html (or custom domain if configured) to ensure your static website is loading correctly.
+8. Final Note:
+   - Make sure to monitor the performance using CloudFront metrics in Amazon CloudWatch and tweak the caching and behavior settings as necessary to optimize performance for your specific use case.
+
+## Use Route 53 for a Custom Domain (Optional)
    - Yet to complete
 
 ## Screenshots
